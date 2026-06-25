@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Generate tailored cover letters from any job posting — by Anuj Wadi">
+  <meta name="theme-color" content="#0f172a">
+  <title>Cover Letter Generator | Anuj Wadi</title>
+  <style>
+    /* ==========================================================================
+       APP UI STYLES
+       ========================================================================== */
+    :root {
+      --bg-deep: #0b1120;
+      --bg-mid: #111827;
+      --card: rgba(255, 255, 255, 0.06);
+      --card-solid: #1a2332;
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #818cf8;
+      --accent-hover: #7dd3fc;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --success: #34d399;
+      --success-bg: rgba(52, 211, 153, 0.12);
+      --warning-bg: rgba(251, 191, 36, 0.12);
+      --warning-text: #fcd34d;
+      --error-bg: rgba(248, 113, 113, 0.12);
+      --error-text: #fca5a5;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      --input-bg: rgba(15, 23, 42, 0.65);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    .app-ui {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.18), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 0%, rgba(129, 140, 248, 0.12), transparent),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
+      min-height: 100vh;
+    }
+
+    /* Top navigation */
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .site-logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    .site-logo span { color: var(--accent); }
+
+    .site-nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-left: 1.25rem;
+      transition: color 0.15s;
+    }
+
+    .site-nav-links a:hover { color: var(--accent); }
+
+    /* Hero */
+    .page-hero {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.35rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .arizona-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+    }
+
+    .arizona-date::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto 0.5rem;
+      padding: 0 1.5rem 1.25rem;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .step-num {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: var(--accent);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .preview-panel { position: static; }
+    }
+
+    .column-left, .column-right {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.4rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card-highlight {
+      border-color: rgba(56, 189, 248, 0.35);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(56, 189, 248, 0.08);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .card-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(129, 140, 248, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      padding: 0;
+      border: none;
+      line-height: 1.3;
+    }
+
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      line-height: 1.45;
+    }
+
+    .form-group { margin-bottom: 1rem; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #64748b;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group textarea.hero {
+      min-height: 260px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .parsed-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.65rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.65rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 999px;
+      color: var(--muted);
+    }
+
+    .tag strong { color: var(--text); font-weight: 600; }
+
+    .toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.85rem;
+    }
+
+    .auto-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      padding: 0.65rem 0.75rem;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .auto-toggle:hover { border-color: rgba(56, 189, 248, 0.3); }
+
+    .auto-toggle input {
+      width: 1rem;
+      height: 1rem;
+      margin-top: 0.15rem;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.85rem;
+    }
+
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      padding: 0.6rem 1.15rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.12s, box-shadow 0.15s, background 0.15s;
+    }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:active:not(:disabled) { transform: translateY(0); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #0f172a;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: 0 6px 20px var(--accent-glow);
+    }
+
+    .btn-lg {
+      padding: 0.85rem 1.5rem;
+      font-size: 0.95rem;
+      width: 100%;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      color: #064e3b;
+      box-shadow: 0 4px 14px rgba(52, 211, 153, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--muted);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      color: var(--text);
+      border-color: var(--muted);
+    }
+
+    .message {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      margin-top: 0.85rem;
+      display: none;
+      border: 1px solid transparent;
+    }
+
+    .message.visible { display: block; }
+    .message.error { background: var(--error-bg); color: var(--error-text); border-color: rgba(248, 113, 113, 0.25); }
+    .message.warning { background: var(--warning-bg); color: var(--warning-text); border-color: rgba(251, 191, 36, 0.25); }
+    .message.success { background: var(--success-bg); color: var(--success); border-color: rgba(52, 211, 153, 0.25); }
+    .message.info { background: rgba(56, 189, 248, 0.1); color: var(--accent); border-color: rgba(56, 189, 248, 0.25); }
+
+    .hidden { display: none !important; }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--input-bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--card-border);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--card-border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .filename-hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin: 0.75rem 0;
+      padding: 0.75rem 1rem;
+      background: var(--input-bg);
+      border: 1px dashed var(--card-border);
+      border-radius: var(--radius-sm);
+      word-break: break-word;
+    }
+
+    .filename-hint strong { color: var(--text); }
+
+    details.settings-panel {
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 0;
+      background: var(--card);
+      overflow: hidden;
+    }
+
+    details.settings-panel summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding: 1rem 1.25rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    details.settings-panel summary::-webkit-details-marker { display: none; }
+
+    details.settings-panel summary::before {
+      content: "⚙";
+      font-size: 0.95rem;
+    }
+
+    details.settings-panel[open] summary {
+      color: var(--text);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .settings-inner { padding: 1rem 1.25rem 1.25rem; }
+
+    .setup-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      line-height: 1.5;
+    }
+
+    .setup-note a { color: var(--accent); }
+    .setup-note code {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      color: var(--accent);
+    }
+
+    /* Preview column — light “desk” look (unchanged letter PDF styling below) */
+    .preview-card {
+      background: #eef1f5;
+      border-color: #d1d5db;
+      padding: 1.25rem;
+    }
+
+    .preview-panel {
+      position: sticky;
+      top: 1rem;
+    }
+
+    .preview-panel > h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #d1d5db;
+    }
+
+    .preview-wrapper {
+      background: #c8cdd4;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow: auto;
+      /* Full page visible — scroll only if window is very short */
+      min-height: 520px;
+    }
+
+    /* Scales the whole letter to fit the panel width without cropping */
+    .preview-scaler {
+      transform-origin: top center;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+
+    .preview-wrapper .letter-page {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .site-footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover { text-decoration: underline; }
+
+    /* ==========================================================================
+       COVER LETTER PDF TEMPLATE STYLES
+       Edit these values to match your personal PDF format.
+       ========================================================================== */
+
+    .letter-page {
+      width: 8.5in;
+      min-height: 11in;
+      height: auto;
+      background: #ffffff;
+      color: #000000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      /* PAGE MARGIN: top right bottom left */
+      padding: 0.85in 1in 1in 1in;
+      /* FONT FAMILY */
+      font-family: "Times New Roman", Times, serif;
+      /* FONT SIZE: body text */
+      font-size: 11pt;
+      /* LINE HEIGHT */
+      line-height: 1.5;
+      overflow: visible;
+    }
+
+    /* Centered header block */
+    .letter-header {
+      text-align: center;
+      margin-bottom: 1.35em;
+    }
+
+    .letter-name {
+      font-size: 16pt;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.15em;
+    }
+
+    .letter-contact {
+      font-size: 10pt;
+      font-weight: 400;
+      color: #000;
+    }
+
+    .letter-date-block {
+      margin-bottom: 1.1em;
+    }
+
+    .letter-salutation {
+      margin-bottom: 1em;
+    }
+
+    /* Body paragraphs — PARAGRAPH SPACING + justified text (like printed letters) */
+    .letter-body p {
+      margin: 0 0 1em 0;
+      /* TEXT ALIGN: change to left if you prefer ragged-right edges */
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+    }
+
+    .letter-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Closing block — SIGNATURE SPACING */
+    .letter-closing {
+      margin-top: 1.1em;
+    }
+
+    .letter-closing p {
+      margin: 0 0 0.15em 0;
+    }
+
+    .letter-sign-name {
+      margin-top: 0.1em;
+    }
+
+    .letter-website {
+      margin-top: 0.35em;
+    }
+
+    .letter-website a {
+      color: #1155cc;
+      text-decoration: underline;
+    }
+
+    @media print {
+      .letter-website a {
+        color: #1155cc;
+      }
+    }
+
+    .letter-body .preview-placeholder {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 11pt;
+      font-style: italic;
+      color: #666;
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      .layout { display: block; padding: 0; max-width: none; }
+      .column-left { display: none; }
+      .column-right, .preview-panel, .card.preview-card {
+        display: block; border: none; box-shadow: none; padding: 0; margin: 0;
+      }
+      .preview-panel h2, .preview-wrapper {
+        background: transparent; padding: 0; margin: 0; border-radius: 0;
+      }
+      .preview-placeholder { display: none; }
+      .preview-scaler {
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+      }
+      .letter-page {
+        width: 100%; min-height: auto; box-shadow: none; margin: 0;
+        /* PAGE MARGIN when printing — keep in sync with .letter-page above */
+        padding: 0.85in 1in 1in 1in;
+      }
+      @page { size: letter; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-ui">
+    <nav class="site-nav no-print" aria-label="Site">
+      <a class="site-logo" href="https://anujwadi.com">Anuj <span>Wadi</span></a>
+      <div class="site-nav-links">
+        <a href="https://anujwadi.com">Home</a>
+        <a href="https://anujwadi.com" target="_blank" rel="noopener">Portfolio</a>
+      </div>
+    </nav>
+
+    <header class="page-hero no-print">
+      <span class="hero-badge">Free tool · Runs in your browser</span>
+      <h1>Cover Letter Generator</h1>
+      <p>Paste any job posting. Get a tailored, human-sounding letter — preview and save as PDF.</p>
+      <span class="arizona-date" id="arizonaDateDisplay" aria-live="polite"></span>
+    </header>
+
+    <ol class="steps no-print" aria-label="How it works">
+      <li class="step"><span class="step-num">1</span> Paste job description</li>
+      <li class="step"><span class="step-num">2</span> Auto-generate letter</li>
+      <li class="step"><span class="step-num">3</span> Print / Save PDF</li>
+    </ol>
+
+    <main class="layout">
+      <div class="column-left no-print">
+
+        <!-- One-time AI setup -->
+        <details class="settings-panel" id="settingsPanel">
+          <summary>AI setup (one time)</summary>
+          <div class="settings-inner">
+          <p class="setup-note">
+            <strong>Free option:</strong> Install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a>,
+            run <code>ollama pull llama3.2</code>, keep Ollama running. No API key needed.
+          </p>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="aiProvider">AI provider</label>
+            <select id="aiProvider">
+              <option value="ollama">Ollama (free, local)</option>
+              <option value="openai">OpenAI (your API key)</option>
+            </select>
+          </div>
+          <div class="form-group" id="ollamaSettings">
+            <label for="ollamaUrl">Ollama URL</label>
+            <input type="url" id="ollamaUrl" value="http://127.0.0.1:11434">
+            <label for="ollamaModel" style="margin-top: 0.5rem;">Model name</label>
+            <input type="text" id="ollamaModel" value="llama3.2" placeholder="llama3.2">
+          </div>
+          <div class="form-group hidden" id="openaiSettings">
+            <label for="openaiKey">OpenAI API key (stored only in this browser)</label>
+            <input type="password" id="openaiKey" autocomplete="off" placeholder="sk-...">
+            <label for="openaiModel" style="margin-top: 0.5rem;">Model</label>
+            <input type="text" id="openaiModel" value="gpt-4o-mini">
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn-secondary" id="btnTestAi">Test connection</button>
+            <button type="button" class="btn-secondary" id="btnSaveSettings">Save settings</button>
+          </div>
+          <div id="settingsMessage" class="message" role="status"></div>
+          </div>
+        </details>
+
+        <!-- Main: paste only -->
+        <section class="card card-highlight" aria-labelledby="paste-heading">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">📋</div>
+            <div>
+              <h2 id="paste-heading">Paste job posting</h2>
+              <p class="card-subtitle">Copy everything from LinkedIn, Indeed, or the company site.</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="jobDescription">Raw job description</label>
+            <textarea id="jobDescription" class="hero" placeholder="Paste the full job posting here…" aria-label="Job description"></textarea>
+          </div>
+          <div class="parsed-tags" id="parsedTags" aria-live="polite"></div>
+          <div class="toggle-group">
+            <label class="auto-toggle">
+              <input type="checkbox" id="autoGenerate" checked>
+              <span>Auto-generate after I paste (2 sec pause)</span>
+            </label>
+            <label class="auto-toggle">
+              <input type="checkbox" id="enableHumanize" checked>
+              <span>Humanize writing — natural tone, fewer AI phrases</span>
+            </label>
+          </div>
+          <p class="setup-note" style="margin-top: 0.5rem;">
+            Humanize runs an extra rewrite so it reads like you wrote it. Always read once before sending.
+          </p>
+          <div id="validationMessage" class="message" role="alert"></div>
+          <div class="btn-row">
+            <button type="button" class="btn-primary btn-lg" id="btnGenerateLetter">Generate cover letter now</button>
+          </div>
+          <div class="status-bar hidden" id="statusBar">
+            <span class="spinner" aria-hidden="true"></span>
+            <span id="statusText">Generating…</span>
+          </div>
+        </section>
+
+        <!-- Auto-detected fields (hidden inputs, editable if needed) -->
+        <section class="card hidden" id="detectedFieldsCard" aria-labelledby="detected-heading">
+          <h2 id="detected-heading">Detected details <span style="font-weight:400;color:var(--muted)">(optional edit)</span></h2>
+          <div class="form-group">
+            <label for="companyName">Company</label>
+            <input type="text" id="companyName" autocomplete="organization">
+          </div>
+          <div class="form-group">
+            <label for="roleTitle">Role</label>
+            <input type="text" id="roleTitle" autocomplete="organization-title">
+          </div>
+          <div class="form-group">
+            <label for="jobUrl">Job URL</label>
+            <input type="url" id="jobUrl" autocomplete="url">
+          </div>
+        </section>
+
+        <!-- Revision -->
+        <section class="card hidden" id="revisionCard">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">✏️</div>
+            <div><h2>Need changes?</h2></div>
+          </div>
+          <div class="form-group">
+            <label for="revisionFeedback">What to change</label>
+            <textarea id="revisionFeedback" placeholder="e.g. Shorter opening, more Python, less formal…"></textarea>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn-primary" id="btnRegenerate">Regenerate with feedback</button>
+            <button type="button" class="btn-secondary" id="btnHumanize">Humanize again</button>
+          </div>
+        </section>
+
+        <!-- Print -->
+        <section class="card hidden" id="printCard">
+          <div class="card-head">
+            <div class="card-icon" aria-hidden="true">📄</div>
+            <div><h2>Save PDF</h2></div>
+          </div>
+          <p class="filename-hint">
+            Suggested filename:<br>
+            <strong id="suggestedFilename">Cover Letter - Anuj Wadi - Company - Role.pdf</strong>
+          </p>
+          <div class="btn-row">
+            <button type="button" class="btn-success" id="btnPrint">Print / Save as PDF</button>
+            <button type="button" class="btn-outline" id="btnClearAll">Clear all</button>
+          </div>
+        </section>
+
+        <!-- Hidden letter storage + manual fallback -->
+        <textarea id="coverLetterText" class="hidden" aria-hidden="true"></textarea>
+      </div>
+
+      <div class="column-right">
+        <section class="card preview-card preview-panel" aria-labelledby="preview-heading">
+          <h2 id="preview-heading" class="no-print">Cover letter preview</h2>
+          <div class="preview-wrapper" id="previewWrapper">
+            <div class="preview-scaler" id="previewScaler">
+            <!-- ================================================================
+                 COVER LETTER PDF TEMPLATE
+                 Fixed header, date, salutation, and signature.
+                 Only the 4 body paragraphs are generated by AI (#letterBodyParagraphs).
+                 Edit name, contact, or closing in this block as needed.
+                 ================================================================ -->
+            <article class="letter-page" id="letterPreview" aria-label="Cover letter preview">
+              <header class="letter-header">
+                <!-- HEADER: change name / contact here -->
+                <div class="letter-name">ANUJ WADI</div>
+                <div class="letter-contact">awadi@asu.edu | 707-977-0567 | AZ, USA</div>
+              </header>
+
+              <div class="letter-date-block" id="letterDate"></div>
+              <div class="letter-salutation" id="letterSalutation"></div>
+
+              <div class="letter-body" id="letterBodyParagraphs">
+                <p class="preview-placeholder">Paste a job description on the left. Your letter will appear here automatically.</p>
+              </div>
+
+              <div class="letter-closing">
+                <p>Best,</p>
+                <p class="letter-sign-name">Anuj Anil Wadi</p>
+                <p class="letter-website"><a href="https://anujwadi.com">anujwadi.com</a></p>
+              </div>
+            </article>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer no-print">
+      <p>Built by <a href="https://anujwadi.com">Anuj Wadi</a> · Cover letters stay in your browser</p>
+    </footer>
+  </div>
+
+  <script>
+  /* ==========================================================================
+     CANDIDATE PROFILE & COVER LETTER RULES
+     ========================================================================== */
+
+  const CANDIDATE_PROFILE = `Candidate Name:
+Anuj Anil Wadi
+
+Education:
+Master's in Robotics & Autonomous Systems (AI)
+Arizona State University
+
+Location:
+Tempe, Arizona
+
+Work Authorization:
+EAD authorized
+
+Availability:
+Available immediately
+
+Relevant Skills:
+Python, JavaScript, TypeScript, SQL, React, Node.js, TensorFlow, PyTorch, OpenCV,
+Machine Learning, NLP, LLMs, Docker, Kubernetes, AWS, CI/CD, ROS, Data Pipelines, Full Stack Development
+
+Possible Experiences:
+- JPMorgan internship
+- PrimaThink internship
+- AI/ML projects
+- Robotics projects
+- Research projects`;
+
+  const COVER_LETTER_RULES = `You are a highly personalized cover letter generation assistant.
+
+Generate realistic, human-sounding, ATS-friendly body text for internships and full-time roles.
+
+IMPORTANT RULES:
+- Output ONLY the letter body (exactly 4 paragraphs)
+- Do NOT include: name, email, phone, date, salutation, "Dear...", "Best", signature, or website
+- No markdown, no bullet points, no explanations
+- Separate paragraphs with one blank line
+- 250–400 words total unless the job clearly needs otherwise
+
+HUMANIZE THE WRITING (critical):
+- Write like a real graduate student emailing a hiring manager — not like AI or a template
+- Use plain, direct sentences. Mix short and medium-length sentences
+- Sound thoughtful and specific, not salesy or overly polished
+- Use natural transitions ("Recently", "During my internship", "What draws me to…") instead of formulaic ones ("Furthermore", "Moreover", "In addition", "I am excited to")
+- Prefer concrete details from the job posting over generic praise
+- Allow slight imperfection in rhythm — avoid perfectly parallel sentence structures
+- Read aloud test: if it sounds like a brochure or ChatGPT, rewrite it simpler
+
+WRITING STYLE: warm, grounded, conversational but professional, early-career engineer.
+Avoid robotic phrasing, corporate buzzwords, stacked adjectives, and exaggerated enthusiasm.
+
+DO NOT USE: "I am thrilled to apply", "I would be honored", "Leveraging my expertise",
+"Dynamic environment", "Results-driven", "Passionate about innovation", "Cutting-edge", "Fast-paced ecosystem",
+"Furthermore", "Moreover", "Additionally", "I am excited to announce", "perfect fit", "unique opportunity".
+
+NEVER invent fake experience, technologies, or skills not in the user profile.
+
+PARAGRAPH GUIDE (4 paragraphs):
+1. State you are applying for the specific role at the company. Mention Master's in Robotics and Autonomous Systems (AI) at Arizona State University and core skills relevant to the job.
+2. Why you are interested in this company and how their work aligns with your background.
+3. Relevant experience (e.g. JPMorgan Chase internship, PrimaThink, AI/ML or robotics projects) and technologies from the job description.
+4. Brief closing: interest in contributing, thank the reader. Mention EAD work authorization only if relevant to the posting.
+
+The HTML template adds date, salutation, and signature automatically. Do not repeat them.
+
+FINAL RULE: Return ONLY the 4 body paragraphs.`;
+
+  const REVISION_INSTRUCTION = `Revise the previous cover letter body using the feedback below. Keep the same candidate profile and job description context. Do not invent new experience. Make the tone more human and natural — less AI-sounding. Return only the revised 4 body paragraphs (no date, salutation, or signature).`;
+
+  /* Second-pass prompt: rewrite draft to sound like a real person wrote it */
+  const HUMANIZE_RULES = `You are an editor who rewrites AI-drafted cover letter paragraphs so they sound human-written.
+
+RULES:
+- Keep the same facts, companies, roles, schools, internships, and technologies — do not add or invent anything
+- Keep exactly 4 paragraphs, same general meaning
+- Output ONLY the 4 rewritten paragraphs (no date, salutation, name, or signature)
+- Separate paragraphs with one blank line
+
+MAKE IT HUMAN:
+- Vary sentence length: mix short punchy lines with longer ones
+- Use simple words where possible; cut filler and corporate speak
+- Use natural connectors ("Recently", "At JPMorgan", "What caught my attention") — not "Furthermore", "Moreover", "Additionally"
+- Allow one or two light contractions (I'm, I've, it's) where they sound natural — do not overuse
+- Avoid perfect parallel lists and mirror sentence structures
+- Remove generic praise; keep specifics from the job
+- Tone: calm, direct, like a thoughtful grad student — not a marketing brochure
+
+BANNED PHRASES (remove or rewrite if present):
+thrilled, honored, passionate, leverage/leveraging, dynamic, cutting-edge, fast-paced, results-driven,
+unique opportunity, perfect fit, excited to announce, delve, tapestry, landscape, testament, pivotal,
+foster, underscore, showcase, align with my passion, eager to contribute my skills
+
+Return ONLY the final 4 paragraphs.`;
+
+  const STORAGE_KEY = 'coverLetterGenerator_v2';
+
+  const els = {
+    arizonaDateDisplay: document.getElementById('arizonaDateDisplay'),
+    jobDescription: document.getElementById('jobDescription'),
+    companyName: document.getElementById('companyName'),
+    roleTitle: document.getElementById('roleTitle'),
+    jobUrl: document.getElementById('jobUrl'),
+    parsedTags: document.getElementById('parsedTags'),
+    validationMessage: document.getElementById('validationMessage'),
+    autoGenerate: document.getElementById('autoGenerate'),
+    enableHumanize: document.getElementById('enableHumanize'),
+    btnHumanize: document.getElementById('btnHumanize'),
+    btnGenerateLetter: document.getElementById('btnGenerateLetter'),
+    statusBar: document.getElementById('statusBar'),
+    statusText: document.getElementById('statusText'),
+    coverLetterText: document.getElementById('coverLetterText'),
+    letterDate: document.getElementById('letterDate'),
+    letterSalutation: document.getElementById('letterSalutation'),
+    letterBodyParagraphs: document.getElementById('letterBodyParagraphs'),
+    previewWrapper: document.getElementById('previewWrapper'),
+    previewScaler: document.getElementById('previewScaler'),
+    revisionCard: document.getElementById('revisionCard'),
+    revisionFeedback: document.getElementById('revisionFeedback'),
+    btnRegenerate: document.getElementById('btnRegenerate'),
+    printCard: document.getElementById('printCard'),
+    suggestedFilename: document.getElementById('suggestedFilename'),
+    btnPrint: document.getElementById('btnPrint'),
+    btnClearAll: document.getElementById('btnClearAll'),
+    aiProvider: document.getElementById('aiProvider'),
+    ollamaUrl: document.getElementById('ollamaUrl'),
+    ollamaModel: document.getElementById('ollamaModel'),
+    openaiSettings: document.getElementById('openaiSettings'),
+    ollamaSettings: document.getElementById('ollamaSettings'),
+    openaiKey: document.getElementById('openaiKey'),
+    openaiModel: document.getElementById('openaiModel'),
+    btnTestAi: document.getElementById('btnTestAi'),
+    btnSaveSettings: document.getElementById('btnSaveSettings'),
+    settingsMessage: document.getElementById('settingsMessage'),
+    settingsPanel: document.getElementById('settingsPanel'),
+  };
+
+  let autoGenTimer = null;
+  let isGenerating = false;
+
+  /** Long date for app header, e.g. May 24, 2026 */
+  function getArizonaDateString() {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Phoenix',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date());
+  }
+
+  /** Short date on letter, e.g. Mar 17, 2026 — matches PDF template */
+  function getLetterDateString() {
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Phoenix',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    }).format(new Date());
+  }
+
+  function updateArizonaDateDisplay() {
+    els.arizonaDateDisplay.textContent = 'Arizona date: ' + getArizonaDateString();
+  }
+
+  function getCompany() {
+    return els.companyName.value.trim() || 'Company';
+  }
+
+  function getRole() {
+    return els.roleTitle.value.trim() || 'Role';
+  }
+
+  function updateSuggestedFilename() {
+    els.suggestedFilename.textContent =
+      'Cover Letter - Anuj Wadi - ' + getCompany() + ' - ' + getRole() + '.pdf';
+  }
+
+  function showMessage(el, text, type) {
+    el.textContent = text;
+    el.className = 'message visible ' + (type || 'info');
+  }
+
+  function hideMessage(el) {
+    el.classList.remove('visible');
+  }
+
+  function setLoading(on, text) {
+    isGenerating = on;
+    els.btnGenerateLetter.disabled = on;
+    els.btnRegenerate.disabled = on;
+    if (on) {
+      els.statusBar.classList.remove('hidden');
+      els.statusText.textContent = text || 'Generating cover letter…';
+    } else {
+      els.statusBar.classList.add('hidden');
+    }
+  }
+
+  /* ==========================================================================
+     PARSE JOB POSTING (company, role, URL)
+     ========================================================================== */
+
+  function parseJobPosting(text) {
+    const result = { company: '', role: '', url: '' };
+
+    const urlMatch = text.match(/https?:\/\/[^\s<>"')]+/i);
+    if (urlMatch) result.url = urlMatch[0].replace(/[.,;]+$/, '');
+
+    const lines = text.split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+
+    const rolePatterns = [
+      /^(?:job\s*title|position|role|title)\s*[:\-]\s*(.+)$/i,
+      /^((?:senior\s+|junior\s+|staff\s+)?(?:software|machine learning|ml|ai|data|robotics|full[\s-]?stack|backend|frontend|devops|cloud|research|systems|platform|embedded)[\w\s\-\/]*(?:engineer|developer|scientist|intern|analyst|architect|manager|consultant|specialist))/i,
+    ];
+
+    const companyPatterns = [
+      /^(?:company|employer|organization)\s*[:\-]\s*(.+)$/i,
+      /(?:at|@)\s+([A-Z][A-Za-z0-9&.,'\-\s]{2,40})(?:\s*[\|\-–]|$)/,
+      /^([A-Z][A-Za-z0-9&.'\-\s]{2,35})\s+(?:is hiring|careers|jobs)/i,
+    ];
+
+    for (let i = 0; i < Math.min(lines.length, 15); i++) {
+      const line = lines[i];
+      if (!result.role) {
+        for (let p = 0; p < rolePatterns.length; p++) {
+          const m = line.match(rolePatterns[p]);
+          if (m) {
+            result.role = (m[1] || m[0]).trim().slice(0, 120);
+            break;
+          }
+        }
+      }
+      if (!result.company) {
+        for (let p = 0; p < companyPatterns.length; p++) {
+          const m = line.match(companyPatterns[p]);
+          if (m) {
+            result.company = m[1].trim().slice(0, 80);
+            break;
+          }
+        }
+      }
+    }
+
+    if (!result.role && lines[0] && lines[0].length < 100) {
+      result.role = lines[0];
+    }
+    if (!result.company && lines[1] && lines[1].length < 60 && !/^(about|description|requirements)/i.test(lines[1])) {
+      result.company = lines[1];
+    }
+
+    return result;
+  }
+
+  function applyParsedFields(parsed, onlyIfEmpty) {
+    if (parsed.company && (!onlyIfEmpty || !els.companyName.value.trim())) {
+      els.companyName.value = parsed.company;
+    }
+    if (parsed.role && (!onlyIfEmpty || !els.roleTitle.value.trim())) {
+      els.roleTitle.value = parsed.role;
+    }
+    if (parsed.url && (!onlyIfEmpty || !els.jobUrl.value.trim())) {
+      els.jobUrl.value = parsed.url;
+    }
+    updateParsedTags();
+    updateSuggestedFilename();
+  }
+
+  function updateParsedTags() {
+    const c = getCompany();
+    const r = getRole();
+    const u = els.jobUrl.value.trim();
+    els.parsedTags.innerHTML =
+      '<span class="tag">Company: <strong>' + escapeHtml(c) + '</strong></span>' +
+      '<span class="tag">Role: <strong>' + escapeHtml(r) + '</strong></span>' +
+      (u ? '<span class="tag">URL detected</span>' : '');
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function onJobDescriptionInput() {
+    const text = els.jobDescription.value;
+    const parsed = parseJobPosting(text);
+    applyParsedFields(parsed, true);
+    scheduleSave();
+
+    if (els.autoGenerate.checked && text.trim().length >= 100) {
+      clearTimeout(autoGenTimer);
+      autoGenTimer = setTimeout(function () {
+        generateCoverLetter(false);
+      }, 2000);
+    }
+  }
+
+  /* ==========================================================================
+     VALIDATION
+     ========================================================================== */
+
+  function validateJobDescription() {
+    const desc = els.jobDescription.value.trim();
+    if (!desc) {
+      return { ok: false, error: 'Paste a job description first.', warning: null };
+    }
+    if (desc.length < 100) {
+      return {
+        ok: true,
+        error: null,
+        warning: 'Description is short — continuing anyway.',
+      };
+    }
+    return { ok: true, error: null, warning: null };
+  }
+
+  /* ==========================================================================
+     PROMPT BUILDERS
+     ========================================================================== */
+
+  function buildInitialPrompt() {
+    const parsed = parseJobPosting(els.jobDescription.value);
+    applyParsedFields(parsed, false);
+
+    return buildInitialPromptFromFields();
+  }
+
+  function buildInitialPromptFromFields() {
+    const arizonaDate = getArizonaDateString();
+    const company = getCompany();
+    const role = getRole();
+    const url = els.jobUrl.value.trim() || '(not provided)';
+    const jobDesc = els.jobDescription.value.trim();
+
+    return COVER_LETTER_RULES + '\n\n---\n\nJOB APPLICATION DETAILS:\n\n' +
+      'Company: ' + company + '\n' +
+      'Role: ' + role + '\n' +
+      'Job URL: ' + url + '\n\n' +
+      'Salutation will be: Dear Hiring Team at ' + company + ',\n' +
+      'Use this exact Arizona date on the letter: ' + arizonaDate + '\n' +
+      'Mention the role "' + role + '" naturally in paragraph 1.\n\n' +
+      '---\n\nJOB DESCRIPTION:\n\n' + jobDesc + '\n\n' +
+      '---\n\nCANDIDATE PROFILE (do not invent beyond this):\n\n' + CANDIDATE_PROFILE;
+  }
+
+  function buildRevisionPrompt() {
+    return COVER_LETTER_RULES + '\n\n---\n\n' + REVISION_INSTRUCTION + '\n\n' +
+      buildInitialPromptFromFields().split('---').slice(1).join('---') +
+      '\n\n---\n\nPREVIOUS COVER LETTER:\n\n' + els.coverLetterText.value.trim() +
+      '\n\n---\n\nREVISION FEEDBACK:\n\n' + (els.revisionFeedback.value.trim() || '(none)');
+  }
+
+  /* ==========================================================================
+     AI PROVIDERS (Ollama free local / OpenAI optional key)
+     ========================================================================== */
+
+  function getSettings() {
+    return {
+      provider: els.aiProvider.value,
+      ollamaUrl: els.ollamaUrl.value.trim().replace(/\/$/, '') || 'http://127.0.0.1:11434',
+      ollamaModel: els.ollamaModel.value.trim() || 'llama3.2',
+      openaiKey: els.openaiKey.value.trim(),
+      openaiModel: els.openaiModel.value.trim() || 'gpt-4o-mini',
+    };
+  }
+
+  function toggleProviderUI() {
+    const isOllama = els.aiProvider.value === 'ollama';
+    els.ollamaSettings.classList.toggle('hidden', !isOllama);
+    els.openaiSettings.classList.toggle('hidden', isOllama);
+  }
+
+  async function callOllama(prompt, settings, temperature) {
+    const base = settings.ollamaUrl;
+    const body = {
+      model: settings.ollamaModel,
+      messages: [{ role: 'user', content: prompt }],
+      stream: false,
+    };
+    if (temperature != null) {
+      body.options = { temperature: temperature };
+    }
+    const res = await fetch(base + '/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('Ollama error (' + res.status + '): ' + errText.slice(0, 200));
+    }
+    const data = await res.json();
+    const content = data.message && data.message.content;
+    if (!content) throw new Error('Ollama returned empty response. Is the model pulled? Try: ollama pull ' + settings.ollamaModel);
+    return content.trim();
+  }
+
+  async function callOpenAI(prompt, settings, temperature) {
+    if (!settings.openaiKey) {
+      throw new Error('Add your OpenAI API key in AI setup, or switch to Ollama (free).');
+    }
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + settings.openaiKey,
+      },
+      body: JSON.stringify({
+        model: settings.openaiModel,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: temperature != null ? temperature : 0.7,
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(function () { return {}; });
+      throw new Error(err.error && err.error.message ? err.error.message : 'OpenAI request failed (' + res.status + ')');
+    }
+    const data = await res.json();
+    const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!content) throw new Error('OpenAI returned empty response.');
+    return content.trim();
+  }
+
+  async function callAI(prompt, temperature) {
+    const settings = getSettings();
+    if (settings.provider === 'openai') {
+      return callOpenAI(prompt, settings, temperature);
+    }
+    return callOllama(prompt, settings, temperature);
+  }
+
+  function buildHumanizePrompt(bodyText) {
+    return HUMANIZE_RULES + '\n\n---\n\nCOMPANY: ' + getCompany() +
+      '\nROLE: ' + getRole() +
+      '\n\n---\n\nDRAFT TO REWRITE:\n\n' + bodyText.trim();
+  }
+
+  /** Fast local cleanup — no API, strips common AI tells */
+  function localHumanizePass(text) {
+    var out = text;
+
+    var replacements = [
+      [/\bFurthermore,?\s*/gi, ''],
+      [/\bMoreover,?\s*/gi, ''],
+      [/\bAdditionally,?\s*/gi, ''],
+      [/\bIn addition,?\s*/gi, ''],
+      [/\bIt is worth noting that\s*/gi, ''],
+      [/\bI am writing to express my interest in\b/gi, "I'm applying for"],
+      [/\bI am writing to apply for\b/gi, "I'm applying for"],
+      [/\bI am excited to\b/gi, "I'd like to"],
+      [/\bI am thrilled to\b/gi, "I'm applying to"],
+      [/\bI would be honored to\b/gi, "I'd welcome the chance to"],
+      [/\bLeveraging my\b/gi, 'Using my'],
+      [/\bLeveraging\b/gi, 'Using'],
+      [/\bUtilize\b/gi, 'Use'],
+      [/\butilize\b/gi, 'use'],
+      [/\bIn today's (?:fast-paced |dynamic )?world,?\s*/gi, ''],
+      [/\bpassionate about\b/gi, 'interested in'],
+      [/\bPassionate about\b/gi, 'Interested in'],
+      [/\bcutting-edge\b/gi, ''],
+      [/\bstate-of-the-art\b/gi, ''],
+      [/\bresults-driven\b/gi, ''],
+      [/\bunique opportunity\b/gi, 'role'],
+      [/\bperfect fit\b/gi, 'good match'],
+      [/\balign(?:s|ed)? with my passion\b/gi, 'fits my background'],
+      [/\bI believe I would be a strong (?:candidate|fit)\b/gi, "I think I'd contribute well"],
+      [/\b—\b/g, ','],
+      [/\s{2,}/g, ' '],
+    ];
+
+    for (var i = 0; i < replacements.length; i++) {
+      out = out.replace(replacements[i][0], replacements[i][1]);
+    }
+
+    out = out.replace(/\n{3,}/g, '\n\n').trim();
+    out = out.replace(/ ,/g, ',').replace(/ \./g, '.');
+    return out;
+  }
+
+  async function humanizeLetter(bodyText) {
+    var cleaned = localHumanizePass(bodyText);
+    var prompt = buildHumanizePrompt(cleaned);
+    var rewritten = await callAI(prompt, 0.88);
+    return localHumanizePass(cleanLetterOutput(rewritten));
+  }
+
+  function cleanLetterOutput(text) {
+    return text
+      .replace(/^```[\w]*\n?/gm, '')
+      .replace(/```$/gm, '')
+      .replace(/^(here is|here's) .{0,40}cover letter:?\s*/i, '')
+      .trim();
+  }
+
+  /** Strip date, salutation, closing if the model included them */
+  function extractBodyParagraphs(text) {
+    var lines = text.split(/\n/);
+    var out = [];
+    var skipPatterns = [
+      /^anuj\s/i,
+      /^awadi@/i,
+      /^dear\s/i,
+      /^best,?\s*$/i,
+      /^sincerely,?\s*$/i,
+      /^regards,?\s*$/i,
+      /^anuj\s+anil\s+wadi/i,
+      /^anujwadi\.com/i,
+      /^\d{3}[-.\s]?\d{3}[-.\s]?\d{4}/,
+      /^[A-Z]{2},?\s+USA/i,
+      /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\s+\d{1,2},?\s+\d{4}/i,
+      /^\d{1,2}\/\d{1,2}\/\d{2,4}/,
+    ];
+
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (!line) {
+        if (out.length && out[out.length - 1] !== '') out.push('');
+        continue;
+      }
+      var skip = false;
+      for (var p = 0; p < skipPatterns.length; p++) {
+        if (skipPatterns[p].test(line)) {
+          skip = true;
+          break;
+        }
+      }
+      if (/^@{0,1}[a-z0-9.-]+\.[a-z]{2,}$/i.test(line) && line.length < 40) skip = true;
+      if (!skip) out.push(line);
+    }
+
+    var joined = out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+    var paragraphs = joined.split(/\n\s*\n/).map(function (p) { return p.trim(); }).filter(Boolean);
+
+    if (paragraphs.length === 1 && paragraphs[0].length > 200) {
+      var chunks = paragraphs[0].match(/[^.!?]+[.!?]+(?:\s|$)/g);
+      if (chunks && chunks.length >= 4) {
+        var per = Math.ceil(chunks.length / 4);
+        paragraphs = [];
+        for (var c = 0; c < chunks.length; c += per) {
+          paragraphs.push(chunks.slice(c, c + per).join('').trim());
+        }
+      }
+    }
+
+    return paragraphs;
+  }
+
+  /**
+   * Shrink the letter to fit the preview panel width so the full page is visible (not cropped).
+   */
+  function fitPreviewScale() {
+    var wrapper = els.previewWrapper;
+    var scaler = els.previewScaler;
+    var page = document.getElementById('letterPreview');
+    if (!wrapper || !scaler || !page) return;
+
+    scaler.style.transform = 'none';
+    scaler.style.width = '';
+    scaler.style.height = '';
+    scaler.style.marginBottom = '';
+
+    var pad = 40;
+    var availW = wrapper.clientWidth - pad;
+    var rect = wrapper.getBoundingClientRect();
+    var availH = Math.max(360, window.innerHeight - rect.top - 48);
+    var pageW = page.offsetWidth;
+    var pageH = page.offsetHeight;
+    if (pageW < 1 || availW < 1) return;
+
+    var scale = Math.min(1, availW / pageW, availH / pageH);
+    scaler.style.transform = 'scale(' + scale + ')';
+    scaler.style.transformOrigin = 'top center';
+    scaler.style.width = pageW + 'px';
+    scaler.style.height = Math.ceil(pageH * scale) + 'px';
+    scaler.style.marginBottom = '0';
+  }
+
+  var fitPreviewTimer;
+  function scheduleFitPreview() {
+    clearTimeout(fitPreviewTimer);
+    fitPreviewTimer = setTimeout(fitPreviewScale, 50);
+  }
+
+  function renderLetterPreview() {
+    var bodyText = els.coverLetterText.value.trim();
+    var company = getCompany();
+    var dateStr = getLetterDateString();
+
+    els.letterDate.textContent = dateStr;
+    els.letterSalutation.textContent = 'Dear Hiring Team at ' + company + ',';
+
+    if (!bodyText) {
+      els.letterBodyParagraphs.innerHTML =
+        '<p class="preview-placeholder">Paste a job description on the left. Your letter will appear here automatically.</p>';
+      scheduleFitPreview();
+      return;
+    }
+
+    var paragraphs = extractBodyParagraphs(bodyText);
+    var html = '';
+    for (var i = 0; i < paragraphs.length; i++) {
+      html += '<p>' + escapeHtml(paragraphs[i]) + '</p>';
+    }
+    els.letterBodyParagraphs.innerHTML = html;
+    scheduleFitPreview();
+  }
+
+  /* ==========================================================================
+     GENERATE FLOW
+     ========================================================================== */
+
+  async function generateCoverLetter(isRevision) {
+    if (isGenerating) return;
+
+    const validation = validateJobDescription();
+    if (!validation.ok) {
+      showMessage(els.validationMessage, validation.error, 'error');
+      return;
+    }
+    if (validation.warning) {
+      showMessage(els.validationMessage, validation.warning, 'warning');
+    } else {
+      hideMessage(els.validationMessage);
+    }
+
+    const prompt = isRevision ? buildRevisionPrompt() : buildInitialPrompt();
+
+    setLoading(true, isRevision ? 'Regenerating with your feedback…' : 'Writing your cover letter…');
+
+    try {
+      var raw = await callAI(prompt);
+      var letter = cleanLetterOutput(raw);
+
+      if (els.enableHumanize.checked) {
+        setLoading(true, 'Humanizing — making it sound more natural…');
+        letter = await humanizeLetter(letter);
+      } else {
+        letter = localHumanizePass(letter);
+      }
+
+      els.coverLetterText.value = letter;
+      updatePreview();
+      els.revisionCard.classList.remove('hidden');
+      els.printCard.classList.remove('hidden');
+      updateSuggestedFilename();
+      scheduleSave();
+      var doneMsg = els.enableHumanize.checked
+        ? 'Cover letter ready (humanized). Read it once, then Print / Save as PDF.'
+        : 'Cover letter ready. Review the preview → Print / Save as PDF.';
+      showMessage(els.validationMessage, doneMsg, 'success');
+    } catch (err) {
+      console.error(err);
+      var msg = err.message || String(err);
+      if (msg.indexOf('Failed to fetch') !== -1 || msg.indexOf('NetworkError') !== -1) {
+        msg = 'Cannot reach AI. For Ollama: install it, run "ollama serve", pull a model, open this page via http://localhost (not file://). See AI setup.';
+        els.settingsPanel.open = true;
+      }
+      showMessage(els.validationMessage, msg, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function updatePreview() {
+    renderLetterPreview();
+  }
+
+  /* ==========================================================================
+     SETTINGS TEST
+     ========================================================================== */
+
+  async function testAiConnection() {
+    showMessage(els.settingsMessage, 'Testing…', 'info');
+    try {
+      const reply = await callAI('Reply with exactly: OK');
+      showMessage(els.settingsMessage, 'Connected. Model replied: ' + reply.slice(0, 40), 'success');
+    } catch (err) {
+      showMessage(els.settingsMessage, err.message || String(err), 'error');
+    }
+  }
+
+  /* ==========================================================================
+     LOCAL STORAGE
+     ========================================================================== */
+
+  function scheduleSave() {
+    clearTimeout(scheduleSave._t);
+    scheduleSave._t = setTimeout(saveToLocalStorage, 300);
+  }
+
+  function saveToLocalStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        jobDescription: els.jobDescription.value,
+        company: els.companyName.value,
+        role: els.roleTitle.value,
+        jobUrl: els.jobUrl.value,
+        coverLetter: els.coverLetterText.value,
+        revisionFeedback: els.revisionFeedback.value,
+        autoGenerate: els.autoGenerate.checked,
+        enableHumanize: els.enableHumanize.checked,
+        settings: getSettings(),
+      }));
+    } catch (e) { /* ignore */ }
+  }
+
+  function loadFromLocalStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.jobDescription != null) els.jobDescription.value = data.jobDescription;
+      if (data.company != null) els.companyName.value = data.company;
+      if (data.role != null) els.roleTitle.value = data.role;
+      if (data.jobUrl != null) els.jobUrl.value = data.jobUrl;
+      if (data.coverLetter != null) els.coverLetterText.value = data.coverLetter;
+      if (data.revisionFeedback != null) els.revisionFeedback.value = data.revisionFeedback;
+      if (data.autoGenerate != null) els.autoGenerate.checked = data.autoGenerate;
+      if (data.enableHumanize != null) els.enableHumanize.checked = data.enableHumanize;
+      if (data.settings) {
+        els.aiProvider.value = data.settings.provider || 'ollama';
+        els.ollamaUrl.value = data.settings.ollamaUrl || 'http://127.0.0.1:11434';
+        els.ollamaModel.value = data.settings.ollamaModel || 'llama3.2';
+        els.openaiKey.value = data.settings.openaiKey || '';
+        els.openaiModel.value = data.settings.openaiModel || 'gpt-4o-mini';
+      }
+      updateParsedTags();
+      updatePreview();
+      if (els.coverLetterText.value.trim()) {
+        els.revisionCard.classList.remove('hidden');
+        els.printCard.classList.remove('hidden');
+      }
+      updateSuggestedFilename();
+    } catch (e) { /* ignore */ }
+  }
+
+  /* ==========================================================================
+     EVENTS
+     ========================================================================== */
+
+  els.jobDescription.addEventListener('input', onJobDescriptionInput);
+
+  els.btnGenerateLetter.addEventListener('click', function () {
+    generateCoverLetter(false);
+  });
+
+  els.btnRegenerate.addEventListener('click', function () {
+    if (!els.revisionFeedback.value.trim()) {
+      showMessage(els.validationMessage, 'Add feedback first, or edit the letter in preview and re-print.', 'warning');
+      return;
+    }
+    generateCoverLetter(true);
+  });
+
+  els.btnHumanize.addEventListener('click', async function () {
+    if (!els.coverLetterText.value.trim()) {
+      showMessage(els.validationMessage, 'Generate a letter first.', 'warning');
+      return;
+    }
+    if (isGenerating) return;
+    setLoading(true, 'Humanizing…');
+    try {
+      els.coverLetterText.value = await humanizeLetter(els.coverLetterText.value);
+      updatePreview();
+      scheduleSave();
+      showMessage(els.validationMessage, 'Letter humanized. Read it before sending.', 'success');
+    } catch (err) {
+      showMessage(els.validationMessage, err.message || String(err), 'error');
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  els.enableHumanize.addEventListener('change', scheduleSave);
+
+  els.btnPrint.addEventListener('click', function () {
+    window.print();
+  });
+
+  els.btnClearAll.addEventListener('click', function () {
+    if (!confirm('Clear everything?')) return;
+    els.jobDescription.value = '';
+    els.companyName.value = '';
+    els.roleTitle.value = '';
+    els.jobUrl.value = '';
+    els.coverLetterText.value = '';
+    els.revisionFeedback.value = '';
+    els.revisionCard.classList.add('hidden');
+    els.printCard.classList.add('hidden');
+    hideMessage(els.validationMessage);
+    updateParsedTags();
+    updatePreview();
+    localStorage.removeItem(STORAGE_KEY);
+  });
+
+  els.aiProvider.addEventListener('change', function () {
+    toggleProviderUI();
+    scheduleSave();
+  });
+
+  els.btnSaveSettings.addEventListener('click', function () {
+    saveToLocalStorage();
+    showMessage(els.settingsMessage, 'Settings saved in this browser.', 'success');
+  });
+
+  els.btnTestAi.addEventListener('click', testAiConnection);
+
+  [els.companyName, els.roleTitle, els.jobUrl, els.ollamaUrl, els.ollamaModel, els.openaiKey, els.openaiModel].forEach(function (el) {
+    el.addEventListener('input', function () {
+      updateParsedTags();
+      updateSuggestedFilename();
+      renderLetterPreview();
+      scheduleSave();
+    });
+  });
+
+  /* ==========================================================================
+     INIT
+     ========================================================================== */
+
+  updateArizonaDateDisplay();
+  setInterval(updateArizonaDateDisplay, 60 * 60 * 1000);
+  toggleProviderUI();
+  loadFromLocalStorage();
+  renderLetterPreview();
+  updateSuggestedFilename();
+  window.addEventListener('resize', scheduleFitPreview);
+  scheduleFitPreview();
+  </script>
+</body>
+</html>
