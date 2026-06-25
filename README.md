@@ -3,7 +3,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-AnujWadi--Git/cover--letter--generator-181717?logo=github)](https://github.com/AnujWadi-Git/cover-letter-generator)
 [![License](https://img.shields.io/badge/license-MIT-blue)](#license)
 
-A **free, single-file, client-side** cover letter generator built by [Anuj Wadi](https://anujwadi.com). Paste any job posting, generate a tailored letter with AI, preview it in a professional PDF layout, and save as PDF — no backend, no npm, no paid SaaS required.
+A **free, single-file, client-side** cover letter generator built by [Anuj Wadi](https://anujwadi.com). 2026 Paste any job posting, generate a tailored letter with AI, preview it in a professional PDF layout, and save as PDF — no backend, no npm, no paid SaaS required.
 
 | | |
 |---|---|
